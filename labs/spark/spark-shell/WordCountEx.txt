@@ -1,0 +1,5 @@
+val inputfile = sc.textFile("/user/training/wordcount/input/wordcount-input.txt")
+val counts = inputfile.flatMap(line => line.split(" ")).map(word => (word, 1)).reduceByKey(_+_);
+counts.toDebugString
+counts.cache()
+counts.saveAsTextFile("/user/training/wordcount/output")

@@ -1,0 +1,20 @@
+val path = "file:///home/bigdatalab/socgen_bigdata/labs/dataset/spark/people.json"
+
+val df = sqlContext.read.json("file:///home/bigdatalab/socgen_bigdata/labs/dataset/spark/people.json")
+
+df.show()
+df.printSchema()
+df.select("name").show()
+df.select(df("name"), df("age") + 1).show()
+df.filter(df("age") > 21).show()
+df.groupBy("age").count().show()
+
+df.registerTempTable("people")
+
+val teenagers = sqlContext.sql("SELECT name, age FROM people WHERE age >= 13 AND age <= 19")\
+teenagers.collect()
+teenagers.count()
+teenagers.foreach(x => println(x))
+
+val df = sqlContext.read.format("json").load("examples/src/main/resources/people.json")
+df.select("name", "age").write.format("parquet").save("namesAndAges.parquet")

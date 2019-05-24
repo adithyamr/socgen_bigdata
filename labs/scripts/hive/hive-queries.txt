@@ -1,0 +1,82 @@
+##Hive client connection
+
+$beeline
+#Hive Server needs to run to connect
+#!connect jdbc:hive2://localhost:10000 username password org.apache.hive.jdbc.HiveDriver
+
+#Connect without Hive Server
+!connect jdbc:hive2:// username password org.apache.hive.jdbc.HiveDriver
+
+show tables;
+
+## Hive Query Syntax
+
+# Database (Schema) creation
+CREATE SCHEMA training;
+
+# Table Creation
+CREATE [TEMPORARY] [EXTERNAL] TABLE [IF NOT EXISTS] [db_name.] table_name
+
+[(col_name data_type [COMMENT col_comment], ...)]
+[COMMENT table_comment]
+[ROW FORMAT row_format]
+[STORED AS file_format]
+
+# Hive Queries
+
+CREATE SCHEMA hive_training;
+
+CREATE TABLE IF NOT EXISTS employee ( eid int, name String,
+salary String, destination String)
+COMMENT 'Employee details'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS employee ( eid int, name String,
+salary String, destination String)
+COMMENT 'Employee details'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n'
+LOCATION '/user/training/empmgmt/input';
+
+LOAD DATA LOCAL INPATH '/home/bigdatalab/socgen_bigdata/labs/dataset/empmgmt/employee.txt' 
+OVERWRITE INTO TABLE employee;
+
+ALTER TABLE name RENAME TO new_name
+ALTER TABLE name ADD COLUMNS (col_spec[, col_spec ...])
+ALTER TABLE name DROP [COLUMN] column_name
+ALTER TABLE name CHANGE column_name new_name new_type
+ALTER TABLE name REPLACE COLUMNS (col_spec[, col_spec ...])
+
+SELECT * FROM EMPLOYEE;
+SELECT * FROM EMPLOYEE WHERE SALARY >= 45000;
+SELECT COUNT(*) FROM EMPLOYEE;
+SELECT SUM(SALARY) FROM EMPLOYEE;
+
+DROP TABLE IF EXISTS employee;
+DROP SCHEMA training;
+
+## Partitioning Syntax
+
+ALTER TABLE table_name ADD [IF NOT EXISTS] PARTITION partition_spec
+[LOCATION 'location1'] partition_spec [LOCATION 'location2'] ...;
+
+partition_spec:
+: (p_column = p_col_value, p_column = p_col_value, ...)
+
+## Hive Wordcount example
+DROP TABLE IF EXISTS docs;
+
+CREATE TABLE docs (line STRING);
+
+LOAD DATA INPATH '/user/training/wordcount/input/wordcount-input.txt' OVERWRITE INTO TABLE docs;
+
+CREATE TABLE word_counts AS
+SELECT word, count(1) AS count FROM
+ (SELECT explode(split(line, '\\s')) AS word FROM docs) temp
+GROUP BY word
+ORDER BY word;
+SELECT * FROM word_counts;

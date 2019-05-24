@@ -1,0 +1,28 @@
+#Sharing Directories between local to VM
+/home/bigdatalab/socgen_bigdata
+sudo mount -t vboxsf socgen_bigdata /home/bigdatalab/socgen_bigdata
+
+#SSH
+ssh -i [key file path] [hostname]
+
+#Java Installation
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+java -version
+
+#Locate java installation directory
+whereis java
+
+#Eclipse Installation
+cd ~/Downloads
+curl http://ftp.kaist.ac.kr/eclipse/technology/epp/downloads/release/oxygen/3a/eclipse-jee-oxygen-3a-linux-gtk-x86_64.tar.gz -o eclipse-jee-oxygen.tar.gz
+sudo tar xzvf eclipse-jee-oxygen.tar.gz -C ~/.
+cd ~/eclipse	(=> verify installation)
+ 
+#Starting Eclipse
+cd ~/eclipse
+./eclipse
+
+#Leave Safe Mode
+sudo -u hdfs hdfs dfsadmin -safemode leave
